@@ -1,0 +1,109 @@
+VERSION ""
+
+NS_ :
+	BA_
+	BA_DEF_
+	BA_DEF_DEF_
+	BA_DEF_DEF_REL_
+	BA_DEF_REL_
+	BA_DEF_SGTYPE_
+	BA_REL_
+	BA_SGTYPE_
+	BO_TX_BU_
+	BU_BO_REL_
+	BU_EV_REL_
+	BU_SG_REL_
+	CAT_
+	CAT_DEF_
+	CM_
+	ENVVAR_DATA_
+	EV_DATA_
+	FILTER
+	NS_DESC_
+	SGTYPE_
+	SGTYPE_VAL_
+	SG_MUL_VAL_
+	SIGTYPE_VALTYPE_
+	SIG_GROUP_
+	SIG_TYPE_REF_
+	SIG_VALTYPE_
+	VAL_
+	VAL_TABLE_
+
+BS_:
+
+BU_: DBG DRIVER IO MOTOR BRIDGE GPS COMPASS CMP
+
+BO_ 150 MOTOR_CMD: 3 DRIVER
+ SG_ MOTOR_CMD_STEERING : 0|8@1+ (1,-2) [-2|2] "" MOTOR 
+ SG_ MOTOR_CMD_SPEED : 8|8@1+ (1,-25) [-25|25] "" MOTOR
+
+BO_ 151 MOTOR_DATA: 4 MOTOR
+ SG_ MOTOR_DATA_RPM: 0|32@1+ (1,0) [0|0] "" DRIVER
+
+BO_ 200 SENSOR_DATA: 8 BRIDGE
+ SG_ SENSOR_SONARS_left : 0|16@1+ (1,0) [0|0] "cms" DRIVER
+ SG_ SENSOR_SONARS_mid : 16|16@1+ (1,0) [0|0] "cms" DRIVER
+ SG_ SENSOR_SONARS_right : 32|16@1+ (1,0) [0|0] "cms" DRIVER
+ SG_ SENSOR_IR_rear : 48|16@1+ (1,0) [0|0] "cms" DRIVER
+
+BO_ 300 GPS_DESTINATION_INFO: 8 BRIDGE
+SG_ GPS_DESTINATION_LAT : 0|32@1+ (0.000001,-90.000000) [-90|90] "degrees" DRIVER,GPS,MOTOR
+SG_ GPS_DESTINATION_LONG : 32|32@1+ (0.000001,-180.000000) [-180|180] "degrees" DRIVER,GPS,MOTOR
+
+BO_ 301 GPS_CURRENT_INFO: 8 GPS
+SG_ GPS_CURRENT_LAT : 0|32@1+ (0.000001,-90.000000) [-90|90] "degrees" DRIVER,BRIDGE,MOTOR
+SG_ GPS_CURRENT_LONG : 32|32@1+ (0.000001,-180.000000) [-180|180] "degrees" DRIVER,BRIDGE,MOTOR
+
+BO_ 302 COMPASS: 6 GPS 
+ SG_ CMP_DEST_BEARING : 0|16@1+ (0.1,0) [0|359.9] "degrees" DRIVER,BRIDGE,MOTOR
+ SG_ CMP_CURRENT_HEADING : 16|16@1+ (0.1,0) [0|359.9] "degrees" DRIVER,BRIDGE,MOTOR
+ SG_ CMP_DISTANCE : 32|16@1+ (0.01,0) [0|0] "meters" DRIVER,BRIDGE 
+   
+BO_ 105 SENSOR_DEBUG: 1 BRIDGE
+ SG_ IO_DEBUG_CAN_init : 0|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_sensor_init : 1|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_sensor_data : 2|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_bus_off : 3|1@1+ (1,0) [0|0] "" DBG
+ 
+BO_ 106 MOTOR_DEBUG: 6 MOTOR
+ SG_ IO_DEBUG_CAN_init : 0|1@1+ (1,0) [0|0] "" DBG,DRIVER
+ SG_ IO_DEBUG_bus_off : 1|1@1+ (1,0) [0|0] "" DBG,DRIVER
+ SG_ IO_DEBUG_Steering : 2|8@1+ (1,-2) [-2|2] "" DBG,DRIVER
+ SG_ IO_DEBUG_RPM : 10|32@1+ (1,0) [0|0] "" DBG,DRIVER
+ 
+BO_ 107 DRIVER_DEBUG: 1 DRIVER
+ SG_ IO_DEBUG_CAN_init : 0|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_bus_off : 1|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_DRIVER : 3|1@1+ (1,0) [0|0] "" DBG
+
+BO_ 108 GPS_DEBUG: 1 GPS
+ SG_ IO_DEBUG_CAN_init : 0|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_bus_off : 2|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_GPS : 3|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_Compass : 5|1@1+ (1,0) [0|0] "" DBG
+
+BO_ 109 BRIDGE_DEBUG: 1 BRIDGE
+ SG_ IO_DEBUG_CAN_init : 0|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_bus_off : 2|1@1+ (1,0) [0|0] "" DBG
+ SG_ IO_DEBUG_Bridge : 4|1@1+ (1,0) [0|0] "" DBG 
+
+CM_ BU_ DRIVER "The driver controller driving the car";
+CM_ BU_ MOTOR "The motor controller of the car";
+CM_ BU_ BRIDGE "The bridge controller of the car";
+CM_ BU_ GPS    "The GPS controller of the car";
+CM_ BO_ 100 "Sync message used to synchronize the controllers";
+CM_ SG_ 100 DRIVER_HEARTBEAT_cmd "Heartbeat command from the driver";
+
+BA_DEF_ "BusType" STRING ;
+BA_DEF_ BO_ "GenMsgCycleTime" INT 0 0;
+BA_DEF_ SG_ "FieldType" STRING ;
+
+BA_DEF_DEF_ "BusType" "CAN";
+BA_DEF_DEF_ "FieldType" "";
+BA_DEF_DEF_ "GenMsgCycleTime" 0;
+
+BA_ "GenMsgCycleTime" BO_ 100 1000;
+BA_ "FieldType" SG_ 100 DRIVER_HEARTBEAT_cmd "DRIVER_HEARTBEAT_cmd";
+
+VAL_ 100 DRIVER_HEARTBEAT_cmd 2 "DRIVER_HEARTBEAT_cmd_REBOOT" 1 "DRIVER_HEARTBEAT_cmd_SYNC" 0 "DRIVER_HEARTBEAT_cmd_NOOP" ;
